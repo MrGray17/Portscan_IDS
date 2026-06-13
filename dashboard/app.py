@@ -14,6 +14,11 @@ from datetime import datetime
 from flask import Flask, render_template, jsonify, request
 from flask_socketio import SocketIO, emit
 
+# Add project root for config and deception imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+import config
+from deception.monitor_interface import block_ip as engine_block_ip, unblock_ip as engine_unblock_ip
+
 # ── App Setup ─────────────────────────────────
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24).hex()
@@ -103,6 +108,28 @@ def receive_honeypot():
     return jsonify({'status': 'ok'}), 200
 
 
+@app.route('/api/block', methods=['POST'])
+def block_attacker():
+    """
+    Block an IP address via the response engine (kernel blackhole + UFW).
+    Called by deception modules and the dashboard UI.
+    """
+    data = request.get_json(silent=True)
+    ip = data.get('ip') if data else None
+    if not ip:
+        return jsonify({'error': 'Missing ip'}), 400
+
+    if ip not in system_state['blocked_ips']:
+        success = engine_block_ip(ip)
+        if success:
+            system_state['blocked_ips'].add(ip)
+            if ip in system_state['scanners']:
+                system_state['scanners'][ip]['blocked'] = True
+            socketio.emit('state_update', {'scanners': system_state['scanners']})
+
+    return jsonify({'status': 'ok'}), 200
+
+
 # ── Socket.IO Events ─────────────────────────
 @socketio.on('connect')
 def handle_connect():
@@ -115,13 +142,15 @@ def handle_connect():
 
 @socketio.on('block_ip')
 def handle_block(data):
-    """Block an IP address (add to blocked set)."""
+    """Block an IP address via the response engine."""
     ip = data.get('ip')
-    if ip:
-        system_state['blocked_ips'].add(ip)
-        if ip in system_state['scanners']:
-            system_state['scanners'][ip]['blocked'] = True
-        socketio.emit('state_update', {'scanners': system_state['scanners']})
+    if ip and ip not in system_state['blocked_ips']:
+        success = engine_block_ip(ip)
+        if success:
+            system_state['blocked_ips'].add(ip)
+            if ip in system_state['scanners']:
+                system_state['scanners'][ip]['blocked'] = True
+            socketio.emit('state_update', {'scanners': system_state['scanners']})
 
 
 # ── Internal Helpers ──────────────────────────

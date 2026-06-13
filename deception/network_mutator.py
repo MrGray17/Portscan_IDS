@@ -2,15 +2,16 @@ import os
 import json
 import random
 import datetime
+import urllib.request
 from scapy.all import IP, TCP
 from netfilterqueue import NetfilterQueue
 
-LOG_FILE = "/home/admin-sirpt/aegis_morph/mutation_logs.json"
 
 def log_event(event_type, src_port, new_ttl):
     """
-    Appends packet mutation data to the central intelligence feed.
-    Synchronized with the JSON array structure used by the Dashboard.
+    Dual logging:
+      1. Local JSONL file (append one JSON line per event)
+      2. HTTP POST to the Flask dashboard (best-effort, 2s timeout)
     """
     new_entry = {
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
@@ -19,19 +20,28 @@ def log_event(event_type, src_port, new_ttl):
         "details": f"Port: {src_port} | Mutated TTL: {new_ttl}"
     }
 
-    if os.path.exists(LOG_FILE):
-        try:
-            with open(LOG_FILE, 'r') as f:
-                data = json.load(f)
-        except json.JSONDecodeError:
-            data = []
-    else:
-        data = []
+    # 1. Local JSONL log
+    with open('mutation_logs.json', 'a') as f:
+        f.write(json.dumps(new_entry) + "\n")
 
-    data.append(new_entry)
-
-    with open(LOG_FILE, 'w') as f:
-        json.dump(data, f, indent=4)
+    # 2. POST to dashboard (best-effort)
+    try:
+        payload = json.dumps({
+            "src_ip": "LOCAL_OUTBOUND",
+            "service": event_type,
+            "commands": [],
+            "credentials": [],
+            "timestamp": new_entry["timestamp"]
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "http://localhost:5000/api/honeypot_event",
+            method="POST",
+            data=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        urllib.request.urlopen(req, timeout=2.0)
+    except Exception:
+        pass
 
 def mutate_packet(packet):
     """

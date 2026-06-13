@@ -3,13 +3,15 @@ import json
 import datetime
 import os
 import random
+import urllib.request
+
 
 def log_event(event_type, attacker_ip, details=""):
     """
-    Appends Layer 4 entrapment telemetry to the central intelligence feed.
-    Synchronized with the JSON array structure utilized by the Dashboard.
+    Dual logging:
+      1. Local JSONL file (append one JSON line per event)
+      2. HTTP POST to the Flask dashboard (best-effort, 2s timeout)
     """
-    log_file = 'mutation_logs.json'
     new_entry = {
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "event": event_type,
@@ -17,19 +19,28 @@ def log_event(event_type, attacker_ip, details=""):
         "details": details
     }
 
-    if os.path.exists(log_file):
-        try:
-            with open(log_file, 'r') as f:
-                data = json.load(f)
-        except json.JSONDecodeError:
-            data = []
-    else:
-        data = []
+    # 1. Local JSONL log
+    with open('mutation_logs.json', 'a') as f:
+        f.write(json.dumps(new_entry) + "\n")
 
-    data.append(new_entry)
-
-    with open(log_file, 'w') as f:
-        json.dump(data, f, indent=4)
+    # 2. POST to dashboard (best-effort)
+    try:
+        payload = json.dumps({
+            "src_ip": attacker_ip,
+            "service": event_type,
+            "commands": [details] if details else [],
+            "credentials": [],
+            "timestamp": new_entry["timestamp"]
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "http://localhost:5000/api/honeypot_event",
+            method="POST",
+            data=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        urllib.request.urlopen(req, timeout=2.0)
+    except Exception:
+        pass
 
 def process_packet(pkt):
     """

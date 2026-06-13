@@ -2,13 +2,24 @@ import asyncio
 import json
 import datetime
 import os
+import urllib.request
+
+# In-memory set tracking which source IPs have hit any honeypot listener.
+# Fresh on every server restart — ideal for demo/testing.
+_honeypot_hits = set()
+
+
+def get_honeypot_flag(src_ip):
+    """Returns 1 if src_ip has interacted with any honeypot listener, else 0."""
+    return 1 if src_ip in _honeypot_hits else 0
+
 
 def log_event(event_type, attacker_ip, details=""):
     """
-    Appends threat intelligence data to the central JSON log.
-    Acts as the telemetry feed for the Aegis Command Center.
+    Dual logging:
+      1. Local JSONL file (append one JSON line per event)
+      2. HTTP POST to the Flask dashboard (best-effort, 2s timeout)
     """
-    log_file = 'mutation_logs.json'
     new_entry = {
         "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "event": event_type,
@@ -16,19 +27,28 @@ def log_event(event_type, attacker_ip, details=""):
         "details": details
     }
 
-    if os.path.exists(log_file):
-        try:
-            with open(log_file, 'r') as f:
-                data = json.load(f)
-        except json.JSONDecodeError:
-            data = []
-    else:
-        data = []
+    # 1. Local JSONL log
+    with open('mutation_logs.json', 'a') as f:
+        f.write(json.dumps(new_entry) + "\n")
 
-    data.append(new_entry)
-
-    with open(log_file, 'w') as f:
-        json.dump(data, f, indent=4)
+    # 2. POST to dashboard (best-effort)
+    try:
+        payload = json.dumps({
+            "src_ip": attacker_ip,
+            "service": event_type,
+            "commands": [details] if details else [],
+            "credentials": [],
+            "timestamp": new_entry["timestamp"]
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "http://localhost:5000/api/honeypot_event",
+            method="POST",
+            data=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        urllib.request.urlopen(req, timeout=2.0)
+    except Exception:
+        pass
 
 async def handle_attacker(reader, writer):
     """
@@ -44,6 +64,7 @@ async def handle_attacker(reader, writer):
     personality_seed = port % 5
 
     print(f"[ALERT] Scanner detected from IP {attacker_ip} on port {port} (Profile {personality_seed})")
+    _honeypot_hits.add(attacker_ip)
     log_event("GHOST_SHIP_DETECTION", attacker_ip, f"Targeting Profile {personality_seed} on port {port}")
 
     try:

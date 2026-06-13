@@ -1,46 +1,111 @@
-# Aegis Entropy: Autonomous Active Defense & MTD Framework
+# Aegis Entropy — Deception & Active Defense Module
 
-Aegis Entropy is a proactive security framework designed to shift the burden of engagement from the defender to the adversary. By implementing **Moving Target Defense (MTD)** and **High-Interaction Deception**, this system transforms a static network surface into a polymorphic, adversarial environment.
-
-This project was developed within the **SIRPT** (Systèmes Informatiques Répartis et Programmation Temps-réel) engineering module to demonstrate advanced distributed threat intelligence and real-time autonomous response.
+Autonomous active defense framework integrating **Moving Target Defense (MTD)**, **High-Interaction Deception**, **Protocol Sabotage**, and **IP Blocking**. All subsystems feed telemetry to the Flask dashboard via dual logging (local JSONL + HTTP POST).
 
 ---
 
-## Technical Architecture
+## Subsystems
 
-The framework is composed of four integrated subsystems designed for zero-trust environments:
+### 1. High-Interaction Deception (`core_deception.py`)
+Async TCP honeypot with 5 personality profiles routed deterministically by port (`port % 5`):
+- Profile 0: Simulated Data Leak (fake env vars with credentials)
+- Profile 1: Interactive Shell Mimicry (denies all commands)
+- Profile 2: Credential Harvesting (captures login attempts)
+- Profile 3: SSH Decoy with Latency (delays responses)
+- Profile 4: Tool-Breaker (infinite JSON payload to exhaust scanners)
 
-### 1. Moving Target Defense (network_mutator.py)
-Utilizes Layer 3/4 packet mutation to invalidate adversarial reconnaissance. 
-* **OS Fingerprint Spoofing**: Intercepts outgoing traffic via `NetfilterQueue` to dynamically alter **Time-To-Live (TTL)** and **TCP Window** sizes.
-* **Reconnaissance Sabotage**: Concurrently mimics Windows, Linux, Cisco IOS, and Solaris signatures, rendering automated OS detection (Nmap, ZMap) inaccurate.
+**ML Integration:** Exposes `get_honeypot_flag(src_ip) -> int` which returns 1 if the source IP has interacted with any honeypot port. This feeds `config.FEATURE_NAMES[9]` ("shadow_node_interaction") in the real-time ML pipeline.
 
-### 2. High-Interaction Deception (core_deception.py)
-A "Ghost Ship" listener surface that engages adversaries across a wide port range.
-* **Deterministic Personality Routing**: Maps ports to specific deception profiles (e.g., Simulated Data Leaks, Shell Mimicry, FTP Decoys) using a mathematical seed (Port % N).
-* **Tool-Breaker Payloads**: Deploys infinite JSON recursion payloads to exhaust the memory and parsing capabilities of automated scanning tools.
+**Port Range:** 1000-1100 (hardcoded in `__main__` block).
 
-### 3. Protocol Sabotage & Tarpitting (traffic_shaper.py)
-Weaponizes the TCP stack to neutralize threats at the handshake level.
-* **Window Jitter**: Forces attacker connections into a "Persist Timer" state by manipulating the TCP Window to 0.
-* **MSS Constraints**: Hard-limits Maximum Segment Size (MSS) to disrupt exploitation buffers and cripple data throughput.
+### 2. Moving Target Defense (`network_mutator.py`)
+Intercepts outgoing TCP packets via NetfilterQueue and randomizes TTL + TCP Window size across 4 OS profiles (Windows, Cisco, Linux, Solaris). Invalidates automated OS fingerprinting (Nmap, ZMap).
 
-### 4. Autonomous Command Center (monitor_interface.py)
-The centralized SOC dashboard and enforcement engine.
-* **Threat Velocity Heuristics**: Calculates real-time threat levels (DEFCON) based on event frequency.
-* **Kernel-Level Blackholing**: Automatically executes `ip route add blackhole` for IPs exceeding the ban threshold, ensuring zero-CPU cost packet dropping.
+**ML Integration:** Exposes `compute_mtd_port_delta(targeted_port, active_port) -> int` which computes the absolute port offset. This feeds `config.FEATURE_NAMES[10]` ("mtd_port_delta") in the real-time ML pipeline.
+
+**Requires:** `sudo iptables -A OUTPUT -p tcp -j NFQUEUE --queue-num 1`
+
+### 3. Protocol Sabotage & Tarpitting (`traffic_shaper.py`)
+Sniffs incoming TCP probes and crafts deceptive SYN-ACK responses with:
+- **Window Jitter:** Forces attackers into TCP Persist Timer state (window=0)
+- **MSS Sabotage:** Limits segment size to 48/128/256 bytes, crippling throughput
+
+Neutralizes SYN, FIN, NULL, and XMAS scanning techniques.
+
+### 4. Response Engine (`monitor_interface.py`)
+IP blocking via kernel blackhole + UFW deny. Provides `block_ip()` and `unblock_ip()` functions called by the Flask dashboard's `/api/block` endpoint.
+
+**Mechanism:**
+1. `ip route add blackhole <ip>` — drops packets at routing layer (zero-CPU)
+2. `ufw insert 1 deny from <ip>` — persistent Layer 3 isolation
 
 ---
 
-## Deployment Configuration
+## Telemetry Architecture
 
-### Prerequisites
+All deception modules use **dual logging**:
+
+```
+deception module
+  ├─ Local: mutation_logs.json (JSONL — one JSON line per event)
+  └─ HTTP:  POST http://localhost:5000/api/honeypot_event → Flask dashboard
+```
+
+The response engine posts to:
+```
+  POST http://localhost:5000/api/block → Flask dashboard + kernel blackhole
+```
+
+---
+
+## Prerequisites
+
 * Linux Kernel 5.x+
-* Root/Sudo privileges
 * Python 3.9+
 * Required libraries: `scapy`, `netfilterqueue`, `asyncio`
+* **Root/sudo privileges** required for:
+  * `network_mutator.py` (NetfilterQueue)
+  * `traffic_shaper.py` (raw packet send)
+  * `monitor_interface.py` (ip route, ufw)
 
-### Initializing the MTD Hook
-Before execution, outgoing TCP traffic must be routed to the mutation queue:
+### Running as Root
+
+The Flask dashboard must run with sudo to enable IP blocking:
+
+```bash
+sudo python dashboard/app.py
+```
+
+Or configure passwordless sudo for the specific commands:
+```
+# /etc/sudoers.d/aegis
+your_user ALL=(root) NOPASSWD: /sbin/ip route add blackhole *, /sbin/ip route del blackhole *
+your_user ALL=(root) NOPASSWD: /usr/sbin/ufw insert *, /usr/sbin/ufw delete *
+```
+
+### MTD Hook
+
+Before running `network_mutator.py`, route outgoing traffic to the mutation queue:
 ```bash
 sudo iptables -A OUTPUT -p tcp -j NFQUEUE --queue-num 1
+```
+
+---
+
+## Running
+
+```bash
+# From project root:
+
+# 1. Start the dashboard (with sudo for blocking)
+sudo python dashboard/app.py
+
+# 2. Start the honeypot listeners (ports 1000-1100)
+python -m deception.core_deception
+
+# 3. Start the MTD engine (requires iptables NFQUEUE rule)
+sudo python -m deception.network_mutator
+
+# 4. Start the tarpit (optional — requires root for raw packet send)
+sudo python -m deception.traffic_shaper
+```
