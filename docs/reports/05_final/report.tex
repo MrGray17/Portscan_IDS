@@ -1,0 +1,114 @@
+% ============================================
+% AEGIS Entropy — Final Report
+% Adaptive Entropy-based Gateway for Intrusion Suppression
+% ============================================
+\input{preamble}
+
+\begin{document}
+
+% --- Title Page ---
+\begin{titlepage}
+\centering
+\vspace*{2cm}
+
+\begin{tikzpicture}
+    \node[draw=blue!80, line width=2pt, rounded corners=8pt,
+          minimum width=12cm, minimum height=4cm, fill=blue!3] (box) {};
+    \node[anchor=center] at (box.center) {
+        \begin{minipage}{10cm}
+            \centering
+            {\Huge\bfseries\color{blue!80!black} AEGIS}\\[0.5cm]
+            {\Large\color{blue!60!black} Adaptive Entropy-based Gateway\\for Intrusion Suppression}\\[0.8cm]
+            {\large\color{red} Final Report --- Port Scan Detection \& Response}
+        \end{minipage}
+    };
+\end{tikzpicture}
+
+\vspace{2cm}
+{\large\textbf{ENSA Kenitra}\\[0.3cm]
+{\large AI Module --- Semester 2 --- 2026}}
+\vspace{1.5cm}
+
+\begin{tabular}{rl}
+\textbf{Team:} & Adil DILLEKH (ML, Dashboard, Response, Integration)\\
+ & Khadija NAFIA (ML, Preprocessing, Training)\\
+ & El Yazid (Deception, MTD, Honeypot)\\
+ & Moulay Anas (Capture, Network Lab)\\
+ & El Kartouti Anas (Conception, Documentation)\\[0.3cm]
+\textbf{Supervisor:} & Prof. Aniss Moumen\\[0.3cm]
+\textbf{Date:} & June 2026\\
+\end{tabular}
+
+\vfill
+{\small ENSA Kenitra --- Networks and Telecommunication Systems Engineering}
+\end{titlepage}
+
+% --- Abstract ---
+\newpage
+\section*{Abstract}
+\addcontentsline{toc}{section}{Abstract}
+
+In the context of increasing network reconnaissance threats, this report presents the design, implementation, and validation of AEGIS Entropy --- an AI-based Network Intrusion Detection and Prevention System specialized in detecting and responding to Port Scan attacks. The system combines supervised Machine Learning classifiers (Random Forest, XGBoost) with an unsupervised anomaly detector (Isolation Forest) to identify port scanning activity from network flow features. Beyond detection, AEGIS integrates a Moving Target Defense (MTD) layer that actively reshapes the network attack surface through port rotation, OS fingerprint spoofing, honeypot deployment, and automated IP blocking. The complete system operates in two modes: an offline mode for analysis of pre-captured Nmap scans, and a live mode for real-time detection and response on a controlled LAN environment. Experimental results on the CICIDS2017 dataset demonstrate detection accuracy of 99.91\% with a False Positive Rate of 0.11\%, exceeding all project success criteria. The defense subsystem achieves full-stack activation in under 520ms, with attacker reconnaissance time increased by 420\% under MTD.
+
+\vspace{1em}
+\noindent\textbf{Keywords:} Network Intrusion Detection, Port Scan, Machine Learning, Random Forest, XGBoost, Moving Target Defense, Honeypot, Honeypot, AEGIS
+
+% --- Table of Contents ---
+\tableofcontents
+\newpage
+
+% ============================================
+% CHAPTER 1: General Introduction
+% ============================================
+\input{chapters/ch01_introduction}
+
+% ============================================
+% CHAPTER 2: State of the Art
+% ============================================
+\input{chapters/ch02_state_of_art}
+
+% ============================================
+% CHAPTER 3: Understanding the Problem and the Data
+% ============================================
+\input{chapters/ch03_understanding}
+
+% ============================================
+% CHAPTER 4: Data Exploration and Preparation
+% ============================================
+\input{chapters/ch04_data_prep}
+
+% ============================================
+% CHAPTER 5: Implementation — Model Training
+% ============================================
+\input{chapters/ch05_implementation}
+
+% ============================================
+% CHAPTER 6: Capture and Network Lab
+% ============================================
+\input{chapters/ch06_capture}
+
+% ============================================
+% CHAPTER 7: Defense and Deception Subsystem
+% ============================================
+\input{chapters/ch07_defense}
+
+% ============================================
+% CHAPTER 8: Integration and Deployment
+% ============================================
+\input{chapters/ch08_integration}
+
+% ============================================
+% CHAPTER 9: Test and Validation
+% ============================================
+\input{chapters/ch09_test_validation}
+
+% ============================================
+% CHAPTER 10: General Conclusion
+% ============================================
+\input{chapters/ch10_conclusion}
+
+% --- Bibliography ---
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

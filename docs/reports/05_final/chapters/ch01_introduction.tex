@@ -1,0 +1,51 @@
+% ============================================
+% Chapter 1: General Introduction
+% ============================================
+\tobewritten{Anas El Kartouti}
+
+\chapter{General Introduction}
+
+\section{Context}
+\tobewritten{Anas El Kartouti --- 0.5 page}
+
+Network security has become one of the most critical concerns in modern computing infrastructure. The rapid proliferation of internet-connected devices and services has created an ever-expanding attack surface. Port scanning and network reconnaissance represent the first stage of most cyberattacks, enabling attackers to map network topology, identify open services, and fingerprint operating systems before launching targeted exploits.
+
+Traditional signature-based Intrusion Detection Systems (IDS) fail against novel or adaptive scanning techniques. Machine Learning-based approaches offer greater adaptability but typically focus solely on detection without active response. This report presents AEGIS Entropy --- a system that combines AI-based detection with active Moving Target Defense.
+
+\section{Problem Statement}
+\tobewritten{Anas El Kartouti --- 0.5 page}
+
+\begin{itemize}
+    \item Port scanning is the reconnaissance phase preceding 78\% of network attacks
+    \item Static defenses provide predictable attack surfaces for adversaries
+    \item Existing IDS solutions detect but do not actively respond to threats
+    \item Slow stealthy scans evade threshold-based detection systems
+\end{itemize}
+
+\section{Objectives}
+\tobewritten{Anas El Kartouti --- 0.5 page}
+
+The primary objectives of the AEGIS Entropy project are:
+
+\begin{enumerate}
+    \item \textbf{Detection:} Build an ML-based classifier capable of identifying port scan activity from network flow features with F1 $\geq$ 88\%, Accuracy $\geq$ 90\%, and FPR $<$ 6\%
+    \item \textbf{Response:} Implement an active defense layer that automatically responds to detected threats through honeypot redirection, port mutation, and IP blocking
+    \item \textbf{Validation:} Demonstrate the complete system on a controlled LAN environment with real attack scenarios
+\end{enumerate}
+
+\section{Report Organization}
+\tobewritten{Anas El Kartouti --- 0.5 page}
+
+This report is organized as follows:
+
+\begin{itemize}
+    \item \textbf{Chapter 2} surveys the state of the art in network intrusion detection, Machine Learning approaches, and Moving Target Defense
+    \item \textbf{Chapter 3} presents the project context, data understanding, and system architecture
+    \item \textbf{Chapter 4} covers data exploration, preprocessing, and feature engineering
+    \item \textbf{Chapter 5} details the model training, cross-validation, and evaluation
+    \item \textbf{Chapter 6} describes the network lab setup and Nmap capture methodology
+    \item \textbf{Chapter 7} presents the defense and deception subsystem
+    \item \textbf{Chapter 8} covers system integration and deployment
+    \item \textbf{Chapter 9} provides test results and validation
+    \item \textbf{Chapter 10} concludes with a summary and future perspectives
+\end{itemize}
