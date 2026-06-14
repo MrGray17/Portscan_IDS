@@ -45,15 +45,15 @@ AEGIS is a two-machine network defense system. A **Kali** attacker VM launches p
 
 ## Results
 
-All three models trained on the **CICIDS2017 PortScan** dataset (286K flow records).
+All three models trained on the **CICIDS2017 PortScan** dataset (286K flow records) with **11 features** (9 from Data Dictionary + 2 MTD placeholders).
 
 | Model | Accuracy | F1-Score | Precision | Recall | FPR | AUC-ROC |
 |:------|:--------:|:--------:|:---------:|:------:|:---:|:-------:|
-| **XGBoost** | **99.997%** | **99.997%** | 99.997% | 99.997% | **0.004%** | 1.000 |
-| **Random Forest** | 99.993% | 99.994% | 99.997% | 99.991% | 0.004% | 1.000 |
-| Isolation Forest | 68.2% | 73.3% | 68.6% | 78.8% | 45.0% | -- |
+| **XGBoost** | **99.914%** | **99.923%** | 99.909% | 99.937% | **0.11%** | 0.999904 |
+| **Random Forest** | 99.911% | 99.920% | 99.909% | 99.931% | **0.11%** | 0.999684 |
+| Isolation Forest | 24.627% | 9.464% | 14.184% | 7.101% | 53.53% | 0.000 |
 
-> Both supervised models exceed the success criteria: **F1 >= 88%**, **Accuracy >= 90%**, **FPR < 6%**.
+> Both supervised models trained with **11 features** exceed the success criteria: **F1 >= 88%**, **Accuracy >= 90%**, **FPR < 6%**.
 
 ---
 ## Project Structure
@@ -126,9 +126,10 @@ The detection pipeline follows a rigorous 8-step process:
       |
 8. TRAIN     Random Forest (100 trees) + XGBoost (lr=0.1, depth=6)
              + Isolation Forest (unsupervised baseline)
+             Models trained on 11 features only.
 ```
 
-**Feature set (9 active + 2 MTD placeholders):**
+**Feature set (11 total — 9 CSV features + 2 MTD placeholders):**
 
 | # | Feature | Source | Purpose |
 |---|---------|--------|---------|
