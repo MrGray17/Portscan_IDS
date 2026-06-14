@@ -8,7 +8,7 @@
 
 \section{Introduction}
 
-In the context of the \textbf{AEGIS Entropy} project, the artificial intelligence-based detection module constitutes the core component of the defense system against \textit{Port Scan} attacks. This chapter details every step of the data pipeline: from exploring and cleaning the raw data, through selecting features according to the Data Dictionary, to preparing the final dataset for model training.
+In the context of the \textbf{AEGIS Entropy} project, the artificial intelligence-based detection module constitutes the core component of the defense system against \textit{Port Scan} attacks. This chapter details every step of the data pipeline: from exploring and cleaning the raw data, through selecting features according to the Data Dictionary, to preparing the final dataset for model training, strictly adhering to the PDCA (\textit{Plan-Do-Check-Act}) methodology and the academic standards taught in class.
 
 The primary objective is to build a detection pipeline capable of achieving the success criteria defined in the project's final plan:
 \begin{itemize}
@@ -260,6 +260,14 @@ Init\_Win\_bytes\_forward & 0.96 & None ($< 1.0$) \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Preprocessed Dataset Export}
+
+After all transformations, the cleaned dataset is exported in CSV format to ensure the \textbf{reproducibility} of the pipeline. The training and evaluation scripts directly consume this preprocessed file.
+
+\begin{lstlisting}[caption={Preprocessed dataset export}]
+df.to_csv("../data/preprocessed.csv", index=False)
+\end{lstlisting}
 
 \section{Data Splitting and Normalization}
 
