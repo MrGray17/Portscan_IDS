@@ -3,15 +3,22 @@ capture/raw_datasets/
 aegis_submission/
 raw_datasets/
 
-# Python cache
+# Python
+venv/
 __pycache__/
 *.pyc
 *.pyo
+*.egg-info/
+dist/
+build/
 
 # Temp files
 .token.txt
 *.tmp
+*.log
 
 # OS files
 .DS_Store
 Thumbs.db
+venv/
+data/

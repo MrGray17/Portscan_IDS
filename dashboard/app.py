@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from config import (
     DATA_DIR, DETECTION_LOG_FILE, DECEPTION_LOG_FILE,
-    REFRESH_MS, MODEL_DIR
+    DASHBOARD_REFRESH_MS, MODELS_DIR
 )
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
@@ -128,7 +128,7 @@ def background_push():
             "detection": recent_det,
             "deception": recent_dec
         })
-        time.sleep(REFRESH_MS / 1000)
+        time.sleep(DASHBOARD_REFRESH_MS / 1000)
 
 
 @socketio.on("connect")

@@ -7,7 +7,7 @@ import os, sys, json, time
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from config import (
-    DATA_DIR, DETECTION_LOG_FILE, DECEPTION_LOG_FILE, REFRESH_MS
+    DATA_DIR, DETECTION_LOG_FILE, DECEPTION_LOG_FILE, DASHBOARD_REFRESH_MS
 )
 
 
@@ -58,4 +58,4 @@ def watch_and_emit(socketio):
             last_det_len = det_len
             last_dec_len = dec_len
 
-        time.sleep(REFRESH_MS / 1000)
+        time.sleep(DASHBOARD_REFRESH_MS / 1000)

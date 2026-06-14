@@ -64,7 +64,10 @@ DASHBOARD_REFRESH_MS = 2000    # Socket.IO push interval (milliseconds)
 AUTO_UNBLOCK_MINUTES = 30      # TTL for iptables DROP rules
 
 # --- Deception & MTD ---
+DETECTION_LOG_FILE = os.path.join(DATA_DIR, "detection_logs.json")
 DECEPTION_LOG_FILE = os.path.join(DATA_DIR, "deception_logs.json")
+SCALER_PATH = os.path.join(MODELS_DIR, "scaler.pkl")
+FEATURES_PATH = os.path.join(MODELS_DIR, "feature_columns.json")
 DECEPTION_PORT_START = 1000    # First port for the deception surface
 DECEPTION_PORT_END = 1100      # Last port for the deception surface
 BAN_THRESHOLD = 10             # Events before auto-blackholing an IP

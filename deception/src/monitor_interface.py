@@ -6,7 +6,7 @@ and MTD rotation status from the shared JSON log.
 import sys, os, json, time, datetime, os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
-from config import DECEPTION_LOG_FILE, REFRESH_MS
+from config import DECEPTION_LOG_FILE, DASHBOARD_REFRESH_MS
 
 INTERFACE = "deception-ids"
 
@@ -50,13 +50,13 @@ def display_dashboard():
         detail_keys = {k: v for k, v in ev.items() if k not in ("timestamp", "event_type")}
         print(f" {ts:<26} {et:<20} {detail_keys}")
     print()
-    print(f" Press Ctrl+C to stop | Refresh every {REFRESH_MS // 1000}s")
+    print(f" Press Ctrl+C to stop | Refresh every {DASHBOARD_REFRESH_MS // 1000}s")
 
 
 if __name__ == "__main__":
     try:
         while True:
             display_dashboard()
-            time.sleep(REFRESH_MS / 1000)
+            time.sleep(DASHBOARD_REFRESH_MS / 1000)
     except KeyboardInterrupt:
         print("\n[*] Terminating deception monitor.")
