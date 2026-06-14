@@ -1,7 +1,7 @@
 % ============================================
 % Chapter 8: System Integration
 % ============================================
-% NEW chapter — Adil writes this
+% NEW chapter --- Adil writes this
 
 \chapter{System Integration}
 
@@ -36,7 +36,7 @@ The Bridge module (\texttt{bridge/bridge.py}) serves as the central integration 
     \draw[arrow] (bridge) -- node[lbl,right]{POST /api/alert} (dash);
     \draw[arrow] (bridge) -- node[lbl,left]{fallback} (local);
 \end{tikzpicture}
-\caption{Bridge module data flow: Nmap XML → ML prediction → dashboard + local log.}
+\caption{Bridge module data flow: Nmap XML $\rightarrow$ ML prediction $\rightarrow$ dashboard + local log.}
 \label{fig:bridge_flow}
 \end{figure}
 
