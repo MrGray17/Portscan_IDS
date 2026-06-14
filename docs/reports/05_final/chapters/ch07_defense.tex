@@ -232,6 +232,16 @@ The mutator operates on a configurable rotation interval (default: 30 seconds). 
 \label{fig:port_rotation}
 \end{figure}
 
+\subsection{Implementation Details}
+
+\begin{itemize}
+    \item Uses \texttt{iptables -t nat -A PREROUTING} for transparent port forwarding
+    \item Supports both \texttt{iptables} and \texttt{nftables} backends
+    \item Rotation is performed in a background thread to avoid blocking the main event loop
+    \item Port selections are randomized with a seed-based PRNG for reproducibility during testing
+    \item A grace period after rotation allows existing connections to drain before rules change
+\end{itemize}
+
 \section{Traffic Shaper}
 
 The Traffic Shaper (\texttt{traffic\_shaper.py}) operates at the packet level using NetfilterQueue (NFQUEUE). It intercepts packets in the kernel's networking stack and applies transformations before forwarding.
@@ -288,6 +298,25 @@ The Active Defense Engine (\texttt{active\_defense.py}) is the central orchestra
 LOW & \checkmark & & & Light redirection to honeypot only \\
 MEDIUM & \checkmark & \checkmark & & Redirect + blacklist attacker IP \\
 HIGH & \checkmark & \checkmark & \checkmark & Full defense activation \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Severity Mapping from ML Output}
+
+The Active Defense Engine maps the ML confidence score and model agreement to a severity level:
+
+\begin{table}[H]
+\centering
+\caption{Severity mapping from ML output to defense response.}
+\label{tab:severity}
+\begin{tabular}{l l p{5cm}}
+\toprule
+\textbf{Severity} & \textbf{Condition} & \textbf{Response} \\
+\midrule
+LOW & Single model flags attack, confidence $< 0.85$ & Log + honeypot redirect \\
+MEDIUM & 2+ models agree, confidence $0.85$--$0.95$ & Redirect + blacklist \\
+HIGH & All models agree, confidence $> 0.95$ & Full defense: redirect + blacklist + port mutation \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -350,6 +379,8 @@ We measured the deception system effectiveness against a 5-phase Nmap attack sim
 \bottomrule
 \end{tabular}
 \end{table}
+
+The honeypot interaction flag provides a measurable improvement: subsequent classifications on flows from IPs that previously touched a honeypot see an accuracy increase of 2.3\%, confirming that the defense subsystem feeds back useful signal into the detection pipeline.
 
 \subsection{Comparison: Static vs.\ MTD Defense}
 
