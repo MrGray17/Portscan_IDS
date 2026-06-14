@@ -24,7 +24,6 @@
 \graphicspath{
     {figures/data/}
     {figures/capture/}
-    {figures/defense/}
 }
 \usepackage{float}
 \usepackage{caption}
@@ -127,41 +126,54 @@
 % --- Title Page ---
 \begin{titlepage}
 \centering
-\vspace*{1cm}
 
-{\Large\textsc{ENSA Kenitra}}\\[0.2cm]
-{\small\textsc{Networks and Telecommunication Systems Engineering}}\\[0.2cm]
-{\small\textsc{AI Module --- Semester 2 --- 2026}}
+% --- Logos at top corners ---
+\begin{minipage}{0.45\textwidth}
+\includegraphics[width=2.5cm]{logo-UIT.png}
+\end{minipage}%
+\hfill
+\begin{minipage}{0.45\textwidth}
+\raggedleft
+\includegraphics[width=2.5cm]{ensa_logo.png}
+\end{minipage}
+
+\vspace{1cm}
+
+% --- Institution ---
+{\Large\textsc{Universit\'{e} Ibn Tofa\"{i}l --- K\'{e}nitra}}\\[0.3cm]
+{\large\textsc{\'{E}cole Nationale des Sciences Appliqu\'{e}es de K\'{e}nitra}}\\[0.3cm]
+{\normalsize\textsc{Fili\`{e}re : Ing\'{e}nierie des R\'{e}seaux et des Syst\`{e}mes de T\'{e}l\'{e}communication}}
 
 \vspace{2cm}
 
 \rule{\textwidth}{0.5pt}\\[0.8cm]
 
 {\Huge\bfseries AEGIS}\\[0.4cm]
-{\Large Adaptive Entropy-based Gateway\\for Intrusion Suppression}\\[0.3cm]
-{\large\bfseries Final Report --- Port Scan Detection and Response}
+{\Large Machine Learning-Based Intrusion Detection\\and Active Defense System}
 
 \vspace{0.8cm}
 \rule{\textwidth}{0.5pt}
 
 \vspace{2cm}
 
+% --- Supervisor + Team ---
 \begin{minipage}{0.85\textwidth}
 \centering
-\begin{tabular}{rl}
-\textbf{Team:} & Adil Lekhbioui (ML, Dashboard, Response, Integration)\\
- & Khadija Nafia (ML, Preprocessing, Training)\\
- & El Yazid (Deception, MTD, Honeypot)\\
- & Moulay Anas (Capture, Network Lab)\\
- & El Kartouti Anas (Conception, Documentation)\\[0.5cm]
-\textbf{Supervisor:} & Prof. Aniss Moumen\\[0.5cm]
-\textbf{Date:} & June 2026\\
+\textbf{Encadr\'{e} par}\\[0.3cm]
+Prof.\ Aniss Moumen\\[1cm]
+\textbf{R\'{e}alis\'{e} par}\\[0.3cm]
+\begin{tabular}{c}
+Adil Lekhbioui \\
+Khadija Nafia \\
+El Yazid Hammoubel \\
+Moulay Anas \\
+El Kartouti Anas \\
 \end{tabular}
 \end{minipage}
 
 \vfill
 
-{\small ENSA Kenitra --- Morocco}
+{\normalsize Ann\'{e}e universitaire 2025 -- 2026}
 \end{titlepage}
 
 % --- Table of Contents ---
@@ -171,54 +183,60 @@
 \newpage
 
 % ============================================
-% CHAPTER 1: General Introduction
+% GENERAL INTRODUCTION
 % ============================================
-\input{chapters/ch01_introduction}
+\section*{General Introduction}
+
+The continuous digitalisation of organisations has turned network infrastructures into critical assets shared across LAN, cloud, wireless, and hybrid environments. Protecting these infrastructures is no longer limited to deploying firewalls or signature-based Intrusion Detection Systems; attackers now operate with adaptive, automated tools that probe networks for open services and vulnerabilities before launching targeted intrusions. Port scanning and network reconnaissance constitute the first phase of this kill chain, yet static rule-based defences struggle to keep pace with stealthy, low-rate, or previously unseen scanning strategies.
+
+This situation raises a clear operational question: \textit{How can we detect and classify PortScan attacks from network traffic data (pcap/csv) in order to protect the infrastructure and alert SOC teams in real time?} Existing solutions either detect without responding or respond with manually maintained rules, leaving security teams overwhelmed by false positives and unable to counter reconnaissance before it escalates. There is therefore a need for an intelligent system that can learn behavioural patterns, classify suspicious activity, and enforce autonomous countermeasures.
+
+AEGIS Entropy addresses this need by combining machine learning-driven detection with active deception. The system analyses network flow features with Random Forest, XGBoost, and Isolation Forest classifiers, and couples detections with Moving Target Defence and honeypot redirection to mislead and delay attackers. This report presents the complete design, implementation, and validation of AEGIS Entropy, beginning with the state of the art and progressing through data understanding, model training, capture environment, defence subsystem, integration, and final validation.
 
 % ============================================
-% CHAPTER 2: State of the Art
+% CHAPTER 1: State of the Art
 % ============================================
-\input{chapters/ch02_state_of_art}
+\input{chapters/ch01_state_of_art}
 
 % ============================================
-% CHAPTER 3: Understanding the Problem and the Data
+% CHAPTER 2: Understanding the Problem and the Data
 % ============================================
-\input{chapters/ch03_understanding}
+\input{chapters/ch02_understanding}
 
 % ============================================
-% CHAPTER 4: Data Exploration and Preparation
+% CHAPTER 3: Data Exploration and Preparation
 % ============================================
-\input{chapters/ch04_data_prep}
+\input{chapters/ch03_data_prep}
 
 % ============================================
-% CHAPTER 5: Implementation --- Model Training
+% CHAPTER 4: Model Training and Evaluation
 % ============================================
-\input{chapters/ch05_implementation}
+\input{chapters/ch04_model_training}
 
 % ============================================
-% CHAPTER 6: Capture and Network Lab
+% CHAPTER 5: Capture Environment and Nmap Simulations
 % ============================================
-\input{chapters/ch06_capture}
+\input{chapters/ch05_capture}
 
 % ============================================
-% CHAPTER 7: Defense and Deception Subsystem
+% CHAPTER 6: Defense and Deception Subsystem
 % ============================================
-\input{chapters/ch07_defense}
+\input{chapters/ch06_defense}
 
 % ============================================
-% CHAPTER 8: Integration and Deployment
+% CHAPTER 7: System Integration
 % ============================================
-\input{chapters/ch08_integration}
+\input{chapters/ch07_integration}
 
 % ============================================
-% CHAPTER 9: Test and Validation
+% CHAPTER 8: Test and Validation
 % ============================================
-\input{chapters/ch09_test_validation}
+\input{chapters/ch08_test_validation}
 
 % ============================================
-% CHAPTER 10: General Conclusion
+% CHAPTER 9: Conclusion
 % ============================================
-\input{chapters/ch10_conclusion}
+\input{chapters/ch09_conclusion}
 
 % --- Bibliography ---
 \bibliographystyle{plain}

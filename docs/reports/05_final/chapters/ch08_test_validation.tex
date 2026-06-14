@@ -1,9 +1,9 @@
 % ============================================
-% Chapter 9: Test and Validation
+% Chapter 8: Test and Validation
 % ============================================
 % NEW chapter --- Adil writes this
 
-\chapter{Test and Validation}
+\chapter{Test and Validation}\label{ch:test_validation}
 
 \section{Introduction}
 
@@ -22,6 +22,8 @@ The Bridge module includes a comprehensive test suite (\texttt{bridge/test\_pipe
     \item \textbf{Test 4: Dashboard POST} --- Verify that events are correctly pushed to the Flask dashboard
     \item \textbf{Test 5: Local fallback} --- Confirm that events are written locally when the dashboard is unreachable
 \end{enumerate}
+
+The results of all five tests are presented in Table~\ref{tab:unit_tests}.
 
 \begin{table}[H]
 \centering
@@ -42,7 +44,7 @@ Local fallback & PASS & Events written to JSONL \\
 
 \subsection{Model Performance Validation}
 
-The retrained models were validated against the project's success criteria:
+The retrained models were validated against the project's success criteria, as shown in Table~\ref{tab:model_validation}:
 
 \begin{table}[H]
 \centering
@@ -52,9 +54,9 @@ The retrained models were validated against the project's success criteria:
 \toprule
 \textbf{Model} & \textbf{Accuracy} & \textbf{F1-Score} & \textbf{FPR} & \textbf{Status} \\
 \midrule
-Random Forest & 99.911\% & 99.920\% & 0.11\% & PASS \\
-XGBoost & 99.914\% & 99.923\% & 0.11\% & PASS \\
-Isolation Forest & 24.627\% & 31.720\% & 75.37\% & Expected (see Ch. 5) \\
+Random Forest & 99.911\% & 99.920\% & 0.114\% & PASS \\
+XGBoost & 99.914\% & 99.923\% & 0.114\% & PASS \\
+Isolation Forest & 24.627\% & 9.464\% & 53.532\% & Expected (see Ch. 4) \\
 \bottomrule
 \end{tabular}
 \end{table}

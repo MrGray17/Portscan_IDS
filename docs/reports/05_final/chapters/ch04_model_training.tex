@@ -1,14 +1,14 @@
 % ============================================
-% Chapter 5: Model Training and Evaluation
+% Chapter 4: Model Training and Evaluation
 % ============================================
 % Rewritten — June 2026
 % Based on Khadija's ML pipeline work, retrained models
 
-\chapter{Model Training and Evaluation}
+\chapter{Model Training and Evaluation}\label{ch:model_training}
 
 \section{Introduction}
 
-With the dataset cleaned, standardized, and balanced (Chapter~4), this chapter addresses the core question of the detection module: \textbf{can machine learning reliably distinguish port scan traffic from benign traffic?}
+With the dataset cleaned, standardized, and balanced (Chapter~\ref{ch:data_prep}), this chapter addresses the core question of the detection module: \textbf{can machine learning reliably distinguish port scan traffic from benign traffic?}
 
 To answer this, we train and evaluate three complementary models:
 
@@ -97,11 +97,11 @@ joblib.dump(iso, "../models/saved/isolation_forest.pkl")
 
 To ensure the results are statistically reliable and not dependent on a particular random split of the data, we use \textbf{10-fold Stratified Cross-Validation} on the supervised models.
 
-\textbf{How it works:} The training data is divided into 10 equal parts (\textit{folds}). In each of 10 iterations, 9 folds are used for training and the 1 remaining fold is used for validation. The process repeats until every fold has served as the validation set once. The final score is the average of all 10 iterations.
+\textbf{How it works:} The training data is divided into 10 equal parts (\textit{folds}). In each of 10 iterations, 9 folds are used for training and the 1 remaining fold is used for validation. The process repeats until every fold has served as the validation set once. The final score is the average of all 10 iterations. Figure~\ref{fig:cv} illustrates the process.
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[
+\begin{tikzpicture}[scale=0.85,
     node distance=0.8cm,
     fold/.style={rectangle, draw=blue!50, fill=blue!5, minimum width=1.2cm, minimum height=0.6cm, font=\tiny},
     train/.style={rectangle, draw=green!50, fill=green!10, minimum width=1.2cm, minimum height=0.6cm, font=\tiny},
@@ -144,11 +144,11 @@ XGBoost & 0.9994 & $\pm$ 0.0003 \\
 \end{tabular}
 \end{table}
 
-The extremely low standard deviation ($\pm 0.0003$) confirms that both models perform consistently across all folds --- there is no overfitting to a particular subset of the data. Note that Isolation Forest, being unsupervised, cannot be evaluated via cross-validation on F1 score (it never sees labels during training).
+The extremely low standard deviation ($\pm 0.0003$) reported in Table~\ref{tab:cv_results} confirms that both models perform consistently across all folds --- there is no overfitting to a particular subset of the data. Note that Isolation Forest, being unsupervised, cannot be evaluated via cross-validation on F1 score (it never sees labels during training).
 
 \section{Understanding the Evaluation Metrics}
 
-Before presenting the numerical results, it is important to define what each metric actually means. In network intrusion detection, different metrics serve different purposes:
+Before presenting the numerical results, it is important to define what each metric actually means. Table~\ref{tab:cm_terms} summarises the confusion matrix terminology. In network intrusion detection, different metrics serve different purposes:
 
 \begin{itemize}
     \item \textbf{Accuracy} — The percentage of all predictions that were correct: $\frac{TP + TN}{TP + TN + FP + FN}$. This is the simplest metric but can be misleading if the classes are imbalanced.
@@ -186,7 +186,7 @@ FN (False Negative) & Attack missed (classified as benign) & Port scan goes unde
 
 \subsection{Supervised Models: Random Forest and XGBoost}
 
-Both supervised models deliver exceptional performance on the CICIDS2017 test set:
+Both supervised models deliver exceptional performance on the CICIDS2017 test set, as summarised in Table~\ref{tab:results}:
 
 \begin{table}[H]
 \centering
@@ -210,6 +210,8 @@ Isolation Forest & 24.627\% & 14.184\% & 7.101\% & 9.464\% & --- & 53.532\% \\
     \item The 0.114\% FPR means that out of 1,000 benign flows, the system incorrectly raises an alert for approximately 1 --- an acceptable rate for a production environment.
 \end{itemize}
 
+The confusion matrices in Figure~\ref{fig:confusion_matrices} confirm these numbers visually, and the ROC curves in Figure~\ref{fig:roc_curves} show near-perfect discrimination for both supervised models.
+
 \begin{figure}[H]
 \centering
 \begin{subfigure}[b]{0.48\textwidth}\includegraphics[width=\textwidth]{confusion_matrix_random_forest.png}\caption{Random Forest}\end{subfigure}\hfill
@@ -228,7 +230,7 @@ Isolation Forest & 24.627\% & 14.184\% & 7.101\% & 9.464\% & --- & 53.532\% \\
 
 \subsection{Success Criteria Verification}
 
-The project's final plan defines three quantitative thresholds. Both supervised models not only meet these criteria --- they vastly exceed them:
+The project's final plan defines three quantitative thresholds. Both supervised models not only meet these criteria --- they vastly exceed them, as shown in Table~\ref{tab:success}:
 
 \begin{table}[H]
 \centering
@@ -253,11 +255,11 @@ Isolation Forest performs very poorly on the CICIDS2017 dataset: with an F1-Scor
 
 Isolation Forest is designed to detect anomalies -- data points that are \textit{few and different} from the rest of the dataset. The algorithm works by randomly partitioning the feature space: points that can be isolated with few partitions (short average path length in the isolation tree) are considered anomalies.
 
-This assumption works well when anomalies represent a small fraction of the data (typically $<$ 5\%). However, in our CICIDS2017 dataset, the PortScan class constitutes \textbf{55.48\%} of the data -- it is the \textbf{majority} class, not a minority:
+This assumption works well when anomalies represent a small fraction of the data (typically $<$ 5\%). However, in our CICIDS2017 dataset, the PortScan class constitutes \textbf{55.48\%} of the data -- it is the \textbf{majority} class, not a minority. Figure~\ref{fig:majority_paradox} illustrates this paradox.
 
 \begin{figure}[H]
 \centering
-\begin{tikzpicture}[scale=0.9]
+\begin{tikzpicture}[scale=0.8]
     % Bar for RF/XGB
     \fill[blue!60] (0,0) rectangle (2, 3);
     \fill[red!60] (2,0) rectangle (4, 3);
@@ -277,7 +279,7 @@ This assumption works well when anomalies represent a small fraction of the data
 \label{fig:majority_paradox}
 \end{figure}
 
-Because the algorithm is trained on the complete dataset (BENIGN + PortScan), it sees both classes as \textit{normal} -- neither is anomalous enough to be separated from the other. The result is a model that essentially guesses at random, with a heavy bias towards the majority class.
+Because the algorithm is trained on the complete dataset (BENIGN + PortScan), it sees both classes as \textit{normal} -- neither is anomalous enough to be separated from the other. The result is a model that essentially guesses at random, with a heavy bias towards the majority class. Figure~\ref{fig:iso_cm} shows the resulting confusion matrix.
 
 \subsubsection{Why We Still Keep Isolation Forest}
 
@@ -305,7 +307,7 @@ This chapter presented the training and evaluation of the three models that form
 
     \item \textbf{Isolation Forest fails on CICIDS2017 for a predictable reason.} The majority anomaly paradox -- PortScan being 55\% of the data -- prevents the unsupervised algorithm from usefully separating the classes. This is not a flaw in the algorithm but a mismatch between the training strategy (full dataset, unsupervised) and what the algorithm requires (benign-only, semi-supervised). In a production environment with benign-only training, the model would regain its relevance.
 
-    \item \textbf{The feature set is sufficient.} With only 11 features, both supervised models achieve near-perfect classification. This validates the feature selection done in Chapter~4 and suggests that the 9 CICIDS2017 features carry strong discriminative signal for port scan detection. The 2 placeholder features (shadow node interaction, MTD port delta) will provide additional signal when integrated with the real-time defense subsystems (Chapter~7).
+    \item \textbf{The feature set is sufficient.} With only 11 features, both supervised models achieve near-perfect classification. This validates the feature selection done in Chapter~\ref{ch:data_prep} and suggests that the 9 CICIDS2017 features carry strong discriminative signal for port scan detection. The 2 placeholder features (shadow node interaction, MTD port delta) will provide additional signal when integrated with the real-time defense subsystems (Chapter~\ref{ch:defense}).
 \end{enumerate}
 
-The trained models are saved in \texttt{models/saved/} and are ready for integration with the capture layer (Chapter~6), the defense subsystem (Chapter~7), and the dashboard (Chapter~8).
+The trained models are saved in \texttt{models/saved/} and are ready for integration with the capture layer (Chapter~\ref{ch:capture}), the defense subsystem (Chapter~\ref{ch:defense}), and the dashboard (Chapter~\ref{ch:integration}).

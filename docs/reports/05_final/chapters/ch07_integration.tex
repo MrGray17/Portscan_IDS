@@ -1,9 +1,9 @@
 % ============================================
-% Chapter 8: System Integration
+% Chapter 7: System Integration
 % ============================================
 % NEW chapter --- Adil writes this
 
-\chapter{System Integration}
+\chapter{System Integration}\label{ch:integration}
 
 \section{Introduction}
 
@@ -13,7 +13,7 @@ This chapter describes how the detection, defense, capture, and monitoring subsy
 
 \subsection{Bridge Module}
 
-The Bridge module (\texttt{bridge/bridge.py}) serves as the central integration point, connecting Nmap scan results and live captures to the ML detection pipeline and the Flask dashboard.
+The Bridge module (\texttt{bridge/bridge.py}) serves as the central integration point, connecting Nmap scan results and live captures to the ML detection pipeline and the Flask dashboard. Figure~\ref{fig:bridge_flow} illustrates the data flow.
 
 \begin{figure}[H]
 \centering
@@ -73,7 +73,7 @@ The SOC dashboard frontend (\texttt{dashboard/templates/index.html}) displays:
 
 \section{Deployment Modes}
 
-The system supports three deployment modes via the unified entry point (\texttt{run\_demo.py}):
+The system supports three deployment modes via the unified entry point (\texttt{run\_demo.py}), listed in Table~\ref{tab:deploy_modes}:
 
 \begin{table}[H]
 \centering

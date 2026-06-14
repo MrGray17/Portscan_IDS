@@ -1,10 +1,10 @@
 % ============================================
-% Chapter 7: Defense and Deception Subsystem
+% Chapter 6: Defense and Deception Subsystem
 % ============================================
 % Adapted from defense_documentation.tex by El Yazid
 % Condensed for final report format
 
-\chapter{Defense and Deception Subsystem}
+\chapter{Defense and Deception Subsystem}\label{ch:defense}
 
 \section{Introduction}
 
@@ -16,10 +16,11 @@ The \textbf{AEGIS} system addresses this limitation by coupling ML-based detecti
 
 \subsection{High-Level Overview}
 
-The defense subsystem operates as a layered pipeline that processes network events from detection through response.
+The defense subsystem operates as a layered pipeline that processes network events from detection through response. Figure~\ref{fig:pipeline} illustrates this pipeline.
 
 \begin{figure}[H]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tikzpicture}[
     node distance=1.6cm,
     block/.style={rectangle, draw=cyan, fill=darkbg!5, text width=3cm,
@@ -51,12 +52,15 @@ The defense subsystem operates as a layered pipeline that processes network even
     \draw[aarrow] (dec) -- node[lbl,left]{severity} (block);
     \draw[aarrow] (redir) -- (phantom);
     \draw[aarrow] (block) -- (mutate);
-\end{tikzpicture}
+\end{tikzpicture}%
+}
 \caption{High-level defense pipeline: traffic capture, ML classification, and layered response.}
 \label{fig:pipeline}
 \end{figure}
 
 \subsection{Module Map}
+
+Figure~\ref{fig:modules} shows the module architecture, with the Active Defense Engine orchestrating four defense modules.
 
 \begin{figure}[H]
 \centering
@@ -122,7 +126,7 @@ The Core Deception module (\texttt{core\_deception.py}) implements three decepti
 
 \subsection{Attacker Redirection}
 
-When the ML pipeline classifies traffic as an attack, the system uses iptables REDIRECT rules to silently divert the attacker's TCP connections to a decoy honeypot service.
+When the ML pipeline classifies traffic as an attack, the system uses iptables REDIRECT rules to silently divert the attacker's TCP connections to a decoy honeypot service. Figure~\ref{fig:redirection} shows the redirection flow.
 
 \begin{figure}[H]
 \centering
@@ -189,6 +193,8 @@ The mutator operates on a configurable rotation interval (default: 30 seconds). 
 
 \subsection{Port Mapping Strategy}
 
+Figure~\ref{fig:port_rotation} illustrates three consecutive rotation phases, each separated by the 30-second interval.
+
 \begin{figure}[H]
 \centering
 \begin{tikzpicture}[
@@ -248,6 +254,8 @@ The Traffic Shaper (\texttt{traffic\_shaper.py}) operates at the packet level us
 
 \subsection{Packet Mutation Techniques}
 
+The traffic shaper implements four packet mutation techniques, listed in Table~\ref{tab:mutations}.
+
 \begin{table}[H]
 \centering
 \caption{Packet mutation techniques implemented in the traffic shaper.}
@@ -287,6 +295,8 @@ The Active Defense Engine (\texttt{active\_defense.py}) is the central orchestra
 
 \subsection{Decision Matrix}
 
+Table~\ref{tab:decision} defines the decision matrix that maps severity levels to defense actions.
+
 \begin{table}[H]
 \centering
 \caption{Defense response decision matrix.}
@@ -304,7 +314,7 @@ HIGH & \checkmark & \checkmark & \checkmark & Full defense activation \\
 
 \subsection{Severity Mapping from ML Output}
 
-The Active Defense Engine maps the ML confidence score and model agreement to a severity level:
+The Active Defense Engine maps the ML confidence score and model agreement to a severity level, as defined in Table~\ref{tab:severity}:
 
 \begin{table}[H]
 \centering
@@ -324,6 +334,8 @@ HIGH & All models agree, confidence $> 0.95$ & Full defense: redirect + blacklis
 \section{Evaluation}
 
 \subsection{Defense Response Timing}
+
+Figure~\ref{fig:timing} shows the average response time for each defense module, measured on the Ubuntu Server.
 
 \begin{figure}[H]
 \centering
@@ -361,7 +373,7 @@ HIGH & All models agree, confidence $> 0.95$ & Full defense: redirect + blacklis
 
 \subsection{Deception Effectiveness}
 
-We measured the deception system effectiveness against a 5-phase Nmap attack simulation:
+We measured the deception system effectiveness against a 5-phase Nmap attack simulation, summarised in Table~\ref{tab:attack_results}:
 
 \begin{table}[H]
 \centering
@@ -380,9 +392,11 @@ We measured the deception system effectiveness against a 5-phase Nmap attack sim
 \end{tabular}
 \end{table}
 
-The honeypot interaction flag provides a measurable improvement: subsequent classifications on flows from IPs that previously touched a honeypot see an accuracy increase of 2.3\%, confirming that the defense subsystem feeds back useful signal into the detection pipeline.
+The honeypot interaction flag provides a measurable improvement: flows from IPs that previously touched a honeypot receive a high-confidence weight boost in the classification decision, confirming that the defense subsystem feeds back useful signal into the detection pipeline.
 
 \subsection{Comparison: Static vs.\ MTD Defense}
+
+Figure~\ref{fig:comparison} compares static defense with AEGIS under MTD across four key metrics.
 
 \begin{figure}[H]
 \centering

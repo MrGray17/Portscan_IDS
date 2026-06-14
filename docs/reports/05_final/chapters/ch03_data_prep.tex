@@ -1,10 +1,10 @@
 % ============================================
-% Chapter 4: Data Exploration and Preparation
+% Chapter 3: Data Exploration and Preparation
 % ============================================
 % Rewritten — June 2026
 % Based on Khadija's ML pipeline work, retrained models
 
-\chapter{Data Exploration and Preparation}
+\chapter{Data Exploration and Preparation}\label{ch:data_prep}
 
 \section{Introduction}
 
@@ -21,7 +21,7 @@ The primary objective is to produce a dataset that enables the detection pipelin
 
 \subsection{What is CICIDS2017?}
 
-The \textbf{CICIDS2017} dataset (\textit{Canadian Institute for Cybersecurity Intrusion Detection System}, 2017) is one of the most widely cited academic benchmarks for network intrusion detection research. Unlike older datasets such as KDD-99 --- which dates back to 1999 and no longer reflects modern network behavior --- CICIDS2017 was generated in a controlled environment that replicates realistic network traffic conditions, including both benign user activity and simulated attacks across multiple days.
+The \textbf{CICIDS2017} dataset (\textit{Canadian Institute for Cybersecurity Intrusion Detection System}, 2017) is one of the most widely cited academic benchmarks for network intrusion detection research. Unlike older datasets such as KDD-99 --- which dates back to 1999 and no longer reflects modern network behavior --- CICIDS2017 was generated in a controlled environment that replicates realistic network traffic conditions, including both benign user activity and simulated attacks across multiple days. Table~\ref{tab:dataset} summarises the key characteristics of the subset used in this project.
 
 \begin{table}[H]
 \centering
@@ -47,8 +47,10 @@ The dataset contains 55.48\% PortScan traffic and 44.52\% benign traffic. This i
 
 \begin{itemize}
     \item \textbf{For supervised models} (Random Forest, XGBoost): the imbalance is moderate and can be managed with SMOTE (Section~\ref{sec:smote}).
-    \item \textbf{For unsupervised models} (Isolation Forest): the majority class being the attack class creates a fundamental problem, which we analyse in detail in Chapter~5 (\textit{majority anomaly paradox}).
+    \item \textbf{For unsupervised models} (Isolation Forest): the majority class being the attack class creates a fundamental problem, which we analyse in detail in Chapter~\ref{ch:model_training} (\textit{majority anomaly paradox}).
 \end{itemize}
+
+Figure~\ref{fig:class_dist} shows the class distribution in the dataset.
 
 \begin{figure}[H]
 \centering
@@ -61,7 +63,7 @@ The dataset contains 55.48\% PortScan traffic and 44.52\% benign traffic. This i
 
 \subsection{From the Data Dictionary to the CSV}
 
-The project's Data Dictionary defines 13 features theoretically relevant for detecting port scan attacks. However, CICIDS2017 is a collection of aggregated network flows (\textit{flow-level data}), not raw packet captures. As a result, not all 13 features are available from the CSV. A mapping process was conducted to find the best proxy for each theoretical feature.
+The project's Data Dictionary defines 11 features relevant for detecting port scan attacks (9 extracted from CICIDS2017 + 2 real-time placeholders). However, CICIDS2017 is a collection of aggregated network flows (\textit{flow-level data}), not raw packet captures. As a result, not all theoretical features (e.g.\ Unique Dst IPs, TTL) are directly available from the CSV. A mapping process was conducted to find the best proxy for each theoretical feature. Table~\ref{tab:feature_mapping} presents the complete mapping.
 
 \begin{longtable}{p{3.5cm}cp{3.5cm}p{4.5cm}}
 \caption{Feature mapping: Data Dictionary $\rightarrow$ CICIDS2017 CSV columns} \\
@@ -93,7 +95,7 @@ MTD Port Delta & N/A & Placeholder = 0 & Reserved for future integration with th
 
 \subsection{Final Feature Set: 11 Features}
 
-The pipeline uses \textbf{11 features}: 9 extracted from the CSV + 2 placeholders initialized to 0. The two placeholders (\texttt{shadow\_node\_interaction} and \texttt{mtd\_port\_delta}) are reserved for real-time integration with the defense subsystems described in Chapter~7. In offline mode (using the CICIDS2017 dataset), they are simply set to zero.
+The pipeline uses \textbf{11 features}: 9 extracted from the CSV + 2 placeholders initialized to 0. The two placeholders (\texttt{shadow\_node\_interaction} and \texttt{mtd\_port\_delta}) are reserved for real-time integration with the defense subsystems described in Chapter~\ref{ch:defense}. In offline mode (using the CICIDS2017 dataset), they are simply set to zero. Listing~\ref{lst:features} shows the code that builds this vector.
 
 \begin{lstlisting}[caption={Building the 11-feature vector}, label={lst:features}]
 # 9 features extracted from CSV
@@ -198,6 +200,8 @@ We chose \textbf{capping} for two reasons:
     \item It prevents extreme values from distorting the distributions used by our models, without introducing bias.
 \end{itemize}
 
+Figure~\ref{fig:boxplots} shows the boxplots of all 9 selected features after capping.
+
 \paragraph{Formal Definition:} Let $Q_1$ be the 25\textsuperscript{th} percentile and $Q_3$ the 75\textsuperscript{th} percentile of a feature. The interquartile range is $IQR = Q_3 - Q_1$. Any value outside the interval $[Q_1 - 1.5 \times IQR,\; Q_3 + 1.5 \times IQR]$ is considered an outlier and is capped to the nearest bound.
 
 \begin{lstlisting}[caption={Outlier capping using the IQR method}]
@@ -247,7 +251,7 @@ The skewness coefficient is defined by Fisher's formula:
 \begin{equation}
     \gamma_1 = \frac{E[(X - \mu)^3]}{\sigma^3}
 \end{equation}
-where $\mu$ is the mean and $\sigma$ the standard deviation.
+where $\mu$ is the mean and $\sigma$ the standard deviation. Table~\ref{tab:skewness} reports the skewness values for all 9 features and the action taken for each.
 
 \begin{table}[H]
 \centering
