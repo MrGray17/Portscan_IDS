@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.98 scan initiated Sat Jun 13 10:59:55 2026 as: /usr/lib/nmap/nmap -sV -p 1-1000 -oA /home/kali/scans/03_service_detection 192.168.100.20 -->
+<nmaprun scanner="nmap" args="/usr/lib/nmap/nmap -sV -p 1-1000 -oA /home/kali/scans/03_service_detection 192.168.100.20" start="1781362795" startstr="Sat Jun 13 10:59:55 2026" version="7.98" xmloutputversion="1.05">
+<scaninfo type="syn" protocol="tcp" numservices="1000" services="1-1000"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.100.20" addrtype="ipv4"/>
+<address addr="08:00:27:A6:D9:7A" addrtype="mac" vendor="Oracle VirtualBox virtual NIC"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1781362799" endtime="1781362806"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.100.20" addrtype="ipv4"/>
+<address addr="08:00:27:A6:D9:7A" addrtype="mac" vendor="Oracle VirtualBox virtual NIC"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="closed" count="998">
+<extrareasons reason="reset" count="998" proto="tcp" ports="1-21,23-79,81-1000"/>
+</extraports>
+<port protocol="tcp" portid="22"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="ssh" product="OpenSSH" version="10.2p1 Ubuntu 2ubuntu3.2" extrainfo="Ubuntu Linux; protocol 2.0" ostype="Linux" method="probed" conf="10"><cpe>cpe:/a:openbsd:openssh:10.2p1</cpe><cpe>cpe:/o:linux:linux_kernel</cpe></service></port>
+<port protocol="tcp" portid="80"><state state="open" reason="syn-ack" reason_ttl="64"/><service name="http" product="Apache httpd" version="2.4.66" extrainfo="(Ubuntu)" method="probed" conf="10"><cpe>cpe:/a:apache:http_server:2.4.66</cpe></service></port>
+</ports>
+<times srtt="124" rttvar="12" to="100000"/>
+</host>
+<runstats><finished time="1781362806" timestr="Sat Jun 13 11:00:06 2026" summary="Nmap done at Sat Jun 13 11:00:06 2026; 1 IP address (1 host up) scanned in 10.91 seconds" elapsed="10.91" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

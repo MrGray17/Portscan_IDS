@@ -1,0 +1,12 @@
+# Nmap 7.98 scan initiated Sat Jun 13 10:59:55 2026 as: /usr/lib/nmap/nmap -sV -p 1-1000 -oA /home/kali/scans/03_service_detection 192.168.100.20
+Nmap scan report for 192.168.100.20
+Host is up (0.00012s latency).
+Not shown: 998 closed tcp ports (reset)
+PORT   STATE SERVICE VERSION
+22/tcp open  ssh     OpenSSH 10.2p1 Ubuntu 2ubuntu3.2 (Ubuntu Linux; protocol 2.0)
+80/tcp open  http    Apache httpd 2.4.66 ((Ubuntu))
+MAC Address: 08:00:27:A6:D9:7A (Oracle VirtualBox virtual NIC)
+Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Sat Jun 13 11:00:06 2026 -- 1 IP address (1 host up) scanned in 10.91 seconds

@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"path": "../course"
+		},
+		{
+			"path": "../lectures"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "Portscan_IDS"
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "mini_projet"
+	}
+}

@@ -1,0 +1,4 @@
+# Nmap 7.98 scan initiated Sat Jun 13 11:11:49 2026 as: /usr/lib/nmap/nmap -sS -T5 -p 1-1000 -oA /home/kali/scans/10_very_fast_scan 192.168.100.20
+Host: 192.168.100.20 ()	Status: Up
+Host: 192.168.100.20 ()	Ports: 22/open/tcp//ssh///, 80/open/tcp//http///	Ignored State: closed (998)
+# Nmap done at Sat Jun 13 11:11:54 2026 -- 1 IP address (1 host up) scanned in 4.66 seconds

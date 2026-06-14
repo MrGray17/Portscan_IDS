@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE nmaprun>
+<?xml-stylesheet href="file:///usr/share/nmap/nmap.xsl" type="text/xsl"?>
+<!-- Nmap 7.98 scan initiated Sat Jun 13 11:01:02 2026 as: /usr/lib/nmap/nmap -sU -&#45;top-ports 50 -oA /home/kali/scans/06_udp_scan 192.168.100.20 -->
+<nmaprun scanner="nmap" args="/usr/lib/nmap/nmap -sU -&#45;top-ports 50 -oA /home/kali/scans/06_udp_scan 192.168.100.20" start="1781362862" startstr="Sat Jun 13 11:01:02 2026" version="7.98" xmloutputversion="1.05">
+<scaninfo type="udp" protocol="udp" numservices="50" services="7,53,67-69,80,111,123,135-139,161-162,445,500,514,518,520,593,626,631,996-999,1025-1027,1433-1434,1645-1646,1701,1812,1900,2048-2049,2222,3283,3456,4500,5060,5353,20031,32768,49152-49154"/>
+<verbose level="0"/>
+<debugging level="0"/>
+<hosthint><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.100.20" addrtype="ipv4"/>
+<address addr="08:00:27:A6:D9:7A" addrtype="mac" vendor="Oracle VirtualBox virtual NIC"/>
+<hostnames>
+</hostnames>
+</hosthint>
+<host starttime="1781362866" endtime="1781362882"><status state="up" reason="arp-response" reason_ttl="0"/>
+<address addr="192.168.100.20" addrtype="ipv4"/>
+<address addr="08:00:27:A6:D9:7A" addrtype="mac" vendor="Oracle VirtualBox virtual NIC"/>
+<hostnames>
+</hostnames>
+<ports><extraports state="open|filtered" count="30">
+<extrareasons reason="no-response" count="30" proto="udp" ports="7,53,67-69,80,111,123,135,161,500,514,518,520,593,631,998-999,1025-1026,1645-1646,1701,2048,3456,4500,5060,5353,20031,49152"/>
+</extraports>
+<port protocol="udp" portid="136"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="profile" method="table" conf="3"/></port>
+<port protocol="udp" portid="137"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="netbios-ns" method="table" conf="3"/></port>
+<port protocol="udp" portid="138"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="netbios-dgm" method="table" conf="3"/></port>
+<port protocol="udp" portid="139"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="netbios-ssn" method="table" conf="3"/></port>
+<port protocol="udp" portid="162"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="snmptrap" method="table" conf="3"/></port>
+<port protocol="udp" portid="445"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="microsoft-ds" method="table" conf="3"/></port>
+<port protocol="udp" portid="626"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="serialnumberd" method="table" conf="3"/></port>
+<port protocol="udp" portid="996"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="vsinet" method="table" conf="3"/></port>
+<port protocol="udp" portid="997"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="maitrd" method="table" conf="3"/></port>
+<port protocol="udp" portid="1027"><state state="closed" reason="port-unreach" reason_ttl="64"/></port>
+<port protocol="udp" portid="1433"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="ms-sql-s" method="table" conf="3"/></port>
+<port protocol="udp" portid="1434"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="ms-sql-m" method="table" conf="3"/></port>
+<port protocol="udp" portid="1812"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="radius" method="table" conf="3"/></port>
+<port protocol="udp" portid="1900"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="upnp" method="table" conf="3"/></port>
+<port protocol="udp" portid="2049"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="nfs" method="table" conf="3"/></port>
+<port protocol="udp" portid="2222"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="msantipiracy" method="table" conf="3"/></port>
+<port protocol="udp" portid="3283"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="netassistant" method="table" conf="3"/></port>
+<port protocol="udp" portid="32768"><state state="closed" reason="port-unreach" reason_ttl="64"/><service name="omad" method="table" conf="3"/></port>
+<port protocol="udp" portid="49153"><state state="closed" reason="port-unreach" reason_ttl="64"/></port>
+<port protocol="udp" portid="49154"><state state="closed" reason="port-unreach" reason_ttl="64"/></port>
+</ports>
+<times srtt="272" rttvar="79" to="100000"/>
+</host>
+<runstats><finished time="1781362882" timestr="Sat Jun 13 11:01:22 2026" summary="Nmap done at Sat Jun 13 11:01:22 2026; 1 IP address (1 host up) scanned in 20.47 seconds" elapsed="20.47" exit="success"/><hosts up="1" down="0" total="1"/>
+</runstats>
+</nmaprun>

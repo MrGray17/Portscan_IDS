@@ -1,0 +1,28 @@
+# Nmap 7.98 scan initiated Sat Jun 13 11:01:02 2026 as: /usr/lib/nmap/nmap -sU --top-ports 50 -oA /home/kali/scans/06_udp_scan 192.168.100.20
+Nmap scan report for 192.168.100.20
+Host is up (0.00027s latency).
+Not shown: 30 open|filtered udp ports (no-response)
+PORT      STATE  SERVICE
+136/udp   closed profile
+137/udp   closed netbios-ns
+138/udp   closed netbios-dgm
+139/udp   closed netbios-ssn
+162/udp   closed snmptrap
+445/udp   closed microsoft-ds
+626/udp   closed serialnumberd
+996/udp   closed vsinet
+997/udp   closed maitrd
+1027/udp  closed unknown
+1433/udp  closed ms-sql-s
+1434/udp  closed ms-sql-m
+1812/udp  closed radius
+1900/udp  closed upnp
+2049/udp  closed nfs
+2222/udp  closed msantipiracy
+3283/udp  closed netassistant
+32768/udp closed omad
+49153/udp closed unknown
+49154/udp closed unknown
+MAC Address: 08:00:27:A6:D9:7A (Oracle VirtualBox virtual NIC)
+
+# Nmap done at Sat Jun 13 11:01:22 2026 -- 1 IP address (1 host up) scanned in 20.47 seconds

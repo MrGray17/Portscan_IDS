@@ -1,0 +1,10 @@
+# Nmap 7.98 scan initiated Sat Jun 13 10:59:43 2026 as: /usr/lib/nmap/nmap -sS -p- -oA /home/kali/scans/02_full_tcp_scan 192.168.100.20
+Nmap scan report for 192.168.100.20
+Host is up (0.0022s latency).
+Not shown: 65533 closed tcp ports (reset)
+PORT   STATE SERVICE
+22/tcp open  ssh
+80/tcp open  http
+MAC Address: 08:00:27:A6:D9:7A (Oracle VirtualBox virtual NIC)
+
+# Nmap done at Sat Jun 13 10:59:50 2026 -- 1 IP address (1 host up) scanned in 6.24 seconds

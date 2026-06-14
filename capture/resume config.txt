@@ -1,0 +1,44 @@
+RÉSUMÉ DE LA TOPOLOGIE RÉSEAU
+
+Topologie :
+Kali Linux Attaquant  <---- réseau interne VirtualBox "lab-cyber" ---->  Ubuntu Victime
+
+Réseau interne utilisé :
+- Nom : lab-cyber
+- Type : Réseau interne VirtualBox
+- Réseau IP : 192.168.100.0/24
+- Masque : 255.255.255.0
+
+Machine attaquante : Kali Linux
+- Nom VM : kali-linux-2026.1-virtualbox-amd64
+- Interface NAT : eth0
+- Interface réseau interne : eth1
+- Adresse IP sur lab-cyber : 192.168.100.10/24
+- Rôle : machine attaquante utilisée pour les scans Nmap
+
+Machine victime : Ubuntu Victime
+- Nom VM : Ubuntu Victime
+- Interface NAT : enp0s3
+- Adresse IP NAT : 10.0.2.15/24
+- Interface réseau interne : enp0s8
+- Adresse IP sur lab-cyber : 192.168.100.20/24
+- Rôle : machine cible/victime des scans
+
+Communication entre les deux machines :
+- Kali attaque Ubuntu via le réseau interne lab-cyber
+- Adresse source : 192.168.100.10
+- Adresse cible : 192.168.100.20
+
+Résumé simple :
+Kali Linux : 192.168.100.10/24 sur eth1
+Ubuntu Victime : 192.168.100.20/24 sur enp0s8
+Réseau commun : lab-cyber, 192.168.100.0/24
+
+Schéma :
+Kali Linux
+eth1 : 192.168.100.10/24
+        |
+        | réseau interne VirtualBox : lab-cyber
+        |
+Ubuntu Victime
+enp0s8 : 192.168.100.20/24

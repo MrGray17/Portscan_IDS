@@ -1,0 +1,4 @@
+# Nmap 7.98 scan initiated Sat Jun 13 11:00:09 2026 as: /usr/lib/nmap/nmap -O -oA /home/kali/scans/04_os_detection 192.168.100.20
+Host: 192.168.100.20 ()	Status: Up
+Host: 192.168.100.20 ()	Ports: 22/open/tcp//ssh///, 80/open/tcp//http///	Ignored State: closed (998)	Seq Index: 253	IP ID Seq: All zeros
+# Nmap done at Sat Jun 13 11:00:24 2026 -- 1 IP address (1 host up) scanned in 15.96 seconds

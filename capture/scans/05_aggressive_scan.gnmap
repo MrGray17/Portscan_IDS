@@ -1,0 +1,4 @@
+# Nmap 7.98 scan initiated Sat Jun 13 11:00:36 2026 as: /usr/lib/nmap/nmap -A -oA /home/kali/scans/05_aggressive_scan 192.168.100.20
+Host: 192.168.100.20 ()	Status: Up
+Host: 192.168.100.20 ()	Ports: 22/open/tcp//ssh//OpenSSH 10.2p1 Ubuntu 2ubuntu3.2 (Ubuntu Linux; protocol 2.0)/, 80/open/tcp//http//Apache httpd 2.4.66 ((Ubuntu))/	Ignored State: closed (998)	Seq Index: 261	IP ID Seq: All zeros
+# Nmap done at Sat Jun 13 11:00:58 2026 -- 1 IP address (1 host up) scanned in 22.41 seconds

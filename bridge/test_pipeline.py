@@ -110,7 +110,7 @@ def test_full_pipeline():
 def test_nmap_parser():
     """Test Nmap XML → feature vector conversion."""
     print("\n=== Test: Nmap XML Parser ===")
-    scans_dir = os.path.join(config.PROJECT_ROOT, "capture", "azerty", "scans")
+    scans_dir = os.path.join(config.PROJECT_ROOT, "capture", "scans")
 
     if not os.path.exists(scans_dir):
         print(f"  [SKIP] Scans directory not found: {scans_dir}")

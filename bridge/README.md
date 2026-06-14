@@ -22,7 +22,7 @@ python bridge/bridge.py --input detection/data/test.csv
 ### Run on Nmap XML scans
 ```bash
 # Step 1: Parse Nmap XMLs → CSV
-python bridge/nmap_parser.py --scans-dir capture/azerty/scans --output nmap_features.csv
+python bridge/nmap_parser.py --scans-dir capture/scans --output nmap_features.csv
 
 # Step 2: Run prediction
 python bridge/bridge.py --input nmap_features.csv

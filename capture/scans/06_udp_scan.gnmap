@@ -1,0 +1,4 @@
+# Nmap 7.98 scan initiated Sat Jun 13 11:01:02 2026 as: /usr/lib/nmap/nmap -sU --top-ports 50 -oA /home/kali/scans/06_udp_scan 192.168.100.20
+Host: 192.168.100.20 ()	Status: Up
+Host: 192.168.100.20 ()	Ports: 136/closed/udp//profile///, 137/closed/udp//netbios-ns///, 138/closed/udp//netbios-dgm///, 139/closed/udp//netbios-ssn///, 162/closed/udp//snmptrap///, 445/closed/udp//microsoft-ds///, 626/closed/udp//serialnumberd///, 996/closed/udp//vsinet///, 997/closed/udp//maitrd///, 1027/closed/udp/////, 1433/closed/udp//ms-sql-s///, 1434/closed/udp//ms-sql-m///, 1812/closed/udp//radius///, 1900/closed/udp//upnp///, 2049/closed/udp//nfs///, 2222/closed/udp//msantipiracy///, 3283/closed/udp//netassistant///, 32768/closed/udp//omad///, 49153/closed/udp/////, 49154/closed/udp/////	Ignored State: open|filtered (30)
+# Nmap done at Sat Jun 13 11:01:22 2026 -- 1 IP address (1 host up) scanned in 20.47 seconds

@@ -1,5 +1,6 @@
 # Large dataset files
 capture/raw_datasets/
+capture/scans/*.pcap
 aegis_submission/
 raw_datasets/
 
