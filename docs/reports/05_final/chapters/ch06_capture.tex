@@ -12,9 +12,25 @@ This chapter describes the infrastructure and experimental setup used to generat
 
 \section{Virtualization Environment}
 
-The laboratory relies on Oracle VirtualBox. Two virtual machines are configured with distinct roles:
+The laboratory relies on Oracle VirtualBox. Two virtual machines are configured with distinct roles. Figure~\ref{fig:vbox-global} shows the VirtualBox manager with both laboratory machines.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]{image (1).png}
+    \caption{VirtualBox manager overview showing both laboratory virtual machines.}
+    \label{fig:vbox-global}
+\end{figure}
 
 \subsection{Attacker Machine: Kali Linux}
+
+Kali Linux is configured with two network interfaces: a NAT interface for external access and an internal interface on the \texttt{lab-cyber} network for communicating directly with the target.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.68\linewidth]{image (2).png}
+    \caption{VirtualBox configuration of the Kali Linux attacker machine.}
+    \label{fig:kali-vbox}
+\end{figure}
 
 \begin{table}[H]
 \centering
@@ -38,6 +54,15 @@ Interface 2 & Internal network \texttt{lab-cyber} (scan traffic) \\
 
 \subsection{Target Machine: Ubuntu Victime}
 
+Ubuntu Victime is placed on the same internal network as Kali to enable reconnaissance testing. It also retains a separate NAT interface, which is not used for scans.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.68\linewidth]{image (3).png}
+    \caption{VirtualBox configuration of the Ubuntu Victime target machine.}
+    \label{fig:ubuntu-vbox}
+\end{figure}
+
 \begin{table}[H]
 \centering
 \caption{Ubuntu Victime virtual machine configuration}
@@ -57,6 +82,10 @@ Interface 2 & Internal network \texttt{lab-cyber} (target interface) \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{Network Separation}
+
+The configuration uses two interface types. The NAT interface allows machines to access the external network when needed. The \texttt{lab-cyber} internal network is used exclusively for communication between attacker and victim. This separation is important because it prevents test traffic from mixing with external traffic. In all simulations, Nmap reconnaissance packets traverse the internal network, not the NAT interface, keeping attack traffic confined to the virtual laboratory.
 
 \section{Network Architecture}
 

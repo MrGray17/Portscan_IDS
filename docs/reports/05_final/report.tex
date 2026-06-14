@@ -164,16 +164,6 @@
 {\small ENSA Kenitra --- Morocco}
 \end{titlepage}
 
-% --- Abstract ---
-\newpage
-\section*{Abstract}
-\addcontentsline{toc}{section}{Abstract}
-
-This report presents the design, implementation, and evaluation of AEGIS Entropy, an AI-based network intrusion detection and prevention system for port scan attacks. The system combines supervised classifiers (Random Forest, XGBoost) with an unsupervised anomaly detector (Isolation Forest) to identify reconnaissance activity from network flow features. A Moving Target Defense layer actively reshapes the attack surface through port rotation, honeypot deployment, and automated IP blocking. The system operates in offline mode for batch analysis of Nmap scans and live mode for real-time detection on a controlled LAN. On the CICIDS2017 dataset, the detection pipeline achieves 99.91\% accuracy with a 0.11\% false positive rate, exceeding all project success criteria. The defense subsystem achieves full-stack activation in under 520ms.
-
-\vspace{1em}
-\noindent\textbf{Keywords:} Network Intrusion Detection, Port Scan, Machine Learning, Random Forest, XGBoost, Moving Target Defense, Honeypot
-
 % --- Table of Contents ---
 \tableofcontents
 \listoffigures
