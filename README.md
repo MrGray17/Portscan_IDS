@@ -1,127 +1,238 @@
-# AEGIS — Network Intrusion Detection & Deception System
+<div align="center">
 
-Academic project — ENSA Kenitra — AI Module S2 — 2026
+# AEGIS
 
-## Architecture
+### **Adaptive Entropy-based Gateway for Intrusion Suppression**
+
+<br>
+
+![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white)
+![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-FF6F00?style=flat-square&logo=xgboost&logoColor=white)
+![Scapy](https://img.shields.io/badge/Scapy-2.5+-6DC849?style=flat-square)
+![Flask](https://img.shields.io/badge/Flask-3.0+-000000?style=flat-square&logo=flask&logoColor=white)
+![Linux](https://img.shields.io/badge/Linux-Kali+%2F+Ubuntu-E95420?style=flat-square&logo=linux&logoColor=white)
+
+**Real-time network intrusion detection with ML-driven classification and moving target defense.**
+
+ENSA Kenitra &middot; AI Module &middot; Semester 2 &middot; 2026
+
+</div>
+
+---
+
+## What is AEGIS?
+
+AEGIS is a two-machine network defense system. A **Kali** attacker VM launches port scans against an **Ubuntu Server** running the AEGIS engine. The system captures live traffic, classifies it with trained ML models in real time, and automatically deploys deception tactics against detected attackers &mdash; all visualized on a live SOC dashboard.
+
+```
++----------------------+          +-----------------------------------------------+
+|   ATTACKER (KALI)    |  TCP     |              DEFENSE (UBUNTU)                |
+|                      | -------> |                                               |
+|  nmap / nse / custom |  scan    |  +---------+  +----------+  +-----------+    |
+|                      |          |  | Capture |->|   ML     |->| Deception |    |
+|                      |          |  | (Scapy) |  | (RF+XGB) |  |  (MTD)    |    |
+|                      |          |  +---------+  +----------+  +-----------+    |
+|                      |          |       |              |              |          |
+|                      |          |       v              v              v          |
+|                      |          |  +--------------------------------------------+ |
+|                      |          |  |        SOC Dashboard (Flask + Socket.IO)  | |
+|                      |          |  |           http://ubuntu:5000              | |
+|                      |          |  +--------------------------------------------+ |
++----------------------+          +-----------------------------------------------+
+```
+
+---
+
+## Results
+
+All three models trained on the **CICIDS2017 PortScan** dataset (286K flow records).
+
+| Model | Accuracy | F1-Score | Precision | Recall | FPR | AUC-ROC |
+|:------|:--------:|:--------:|:---------:|:------:|:---:|:-------:|
+| **XGBoost** | **99.997%** | **99.997%** | 99.997% | 99.997% | **0.004%** | 1.000 |
+| **Random Forest** | 99.993% | 99.994% | 99.997% | 99.991% | 0.004% | 1.000 |
+| Isolation Forest | 68.2% | 73.3% | 68.6% | 78.8% | 45.0% | -- |
+
+> Both supervised models exceed the success criteria: **F1 >= 88%**, **Accuracy >= 90%**, **FPR < 6%**.
+
+---
+## Project Structure
 
 ```
 Portscan_IDS/
-├── capture/                    # Data Acquisition Layer
-│   ├── src/
-│   │   ├── capture.py          # Scapy live packet capture
-│   │   └── fetch_and_align_datasets.py  # Dataset ingestion (CICIDS2017, UNSW-NB15)
-│   └── raw_datasets/           # Downloaded CSV datasets
-├── detection/                  # Detection & Classification Layer
-│   ├── src/
-│   │   ├── train.py            # XGBoost & Random Forest training
-│   │   ├── predict.py          # Real-time inference
-│   │   └── cicids2017_pipeline.py  # Full ML pipeline (8-step)
-│   └── pipeline_output/        # Trained models (.joblib), metrics, encoders
-├── deception/                  # Deception & MTD Layer (Aegis Entropy)
-│   └── src/
-│       ├── core_deception.py   # Attacker redirection, phantom networks, blacklisting
-│       ├── network_mutator.py  # Port rotation — Moving Target Defense
-│       ├── traffic_shaper.py   # NetfilterQueue hook — real-time packet mutation
-│       └── monitor_interface.py # Terminal dashboard for deception telemetry
-├── dashboard/                  # Visualization Layer
-│   ├── app.py                  # Flask + Socket.IO backend
-│   ├── templates/index.html    # Dark-theme real-time dashboard
-│   └── static/style.css        # AEGIS visual design
-├── bridge/                     # Inter-module communication
-│   └── event_bridge.py         # Socket.IO bridge: detection ↔ dashboard
-├── config.py                   # Central configuration
-└── requirements.txt            # Dependencies
+|
+|-- config.py                          Central configuration
+|
+|-- capture/                           Data Acquisition
+|   +-- fetch_and_align_datasets.py    CICIDS2017 dataset ingestion
+|   +-- raw_datasets/                  Downloaded CSV files
+|
+|-- detection/                         ML Detection Engine
+|   +-- src/
+|   |   +-- data_preprocessing.py      Cleaning, outlier removal, log transforms
+|   |   +-- feature_selection.py       13-feature mapping from Data Dictionary
+|   |   +-- modeltrain.py              RF + XGBoost + Isolation Forest training
+|   |   +-- evaluate_model.py          6-metric evaluation + confusion matrices
+|   |   +-- predict.py                 Real-time inference on live captures
+|   |   +-- cicids2017_pipeline.py     End-to-end 8-step pipeline
+|   |   +-- config.py                  Detection-specific config
+|   +-- pipeline_output/               Trained models, scalers, metrics
+|
+|-- deception/                         Moving Target Defense
+|   +-- core_deception.py              Attacker redirection, blacklisting
+|   +-- network_mutator.py             Port rotation to shuffle honeypot surface
+|   +-- traffic_shaper.py              NetfilterQueue packet mutation
+|   +-- active_defense.py              Automated response engine
+|   +-- monitor_interface.py           Terminal-based deception telemetry
+|
+|-- bridge/                            Inter-module Communication
+|   +-- bridge.py                      AegisBridge: ML -> dashboard + defense
+|   +-- nmap_parser.py                 Nmap XML/JSON -> feature extraction
+|   +-- event_bridge.py                Socket.IO live event streaming
+|   +-- test_pipeline.py               End-to-end integration test
+|
+|-- dashboard/                         SOC Dashboard
+|   +-- app.py                         Flask + Socket.IO backend
+|   +-- templates/index.html           Real-time dark-theme UI
+|   +-- static/style.css               Custom SOC aesthetic
+|
+|-- demo/                              Live Demo Scripts
+|   +-- ubuntu_setup.sh                One-click Ubuntu Server setup
+|   +-- kali_attack.sh                 5-phase attack simulation
+|   +-- kali_custom_scanner.py         Low-rate stealth scanner
+|
++-- requirements.txt                   All dependencies
 ```
 
-## Modules
+---
+## ML Pipeline
 
-| Module | Source | Role |
-|--------|--------|------|
-| **Capture** | Scapy, CICIDS2017 pipeline | Live packet sniffing + dataset preparation |
-| **Detection** | XGBoost, Random Forest | Binary classification (attack / benign) |
-| **Deception** | Aegis Entropy (MTD) | Honeypot surface, port mutation, attacker redirection |
-| **Dashboard** | Flask + Socket.IO | Real-time visualization of all subsystems |
-| **Bridge** | Socket.IO | Connects detection alerts to dashboard |
+The detection pipeline follows a rigorous 8-step process:
+
+```
+1. FETCH     Download CICIDS2017 PortScan CSV (286,467 flows x 79 features)
+      |
+2. CLEAN     Strip column names, replace inf -> NaN, median imputation
+      |
+3. SELECT    Map 13 Data Dictionary features -> 9 CSV columns + 2 placeholders
+      |
+4. OUTLIER   IQR-based detection + Winsorization capping
+      |
+5. SKEW      Log1p transform for features with |skewness| > 1.0
+      |
+6. SPLIT     80/20 stratified train/test (228,802 / 57,294)
+      |
+7. BALANCE   SMOTE oversampling on training set only (no data leakage)
+      |
+8. TRAIN     Random Forest (100 trees) + XGBoost (lr=0.1, depth=6)
+             + Isolation Forest (unsupervised baseline)
+```
+
+**Feature set (9 active + 2 MTD placeholders):**
+
+| # | Feature | Source | Purpose |
+|---|---------|--------|---------|
+| 1 | Destination Port | CSV | Proxy for distinct dst ports |
+| 2 | Flow Duration | CSV | Scan speed indicator |
+| 3 | Total Fwd Packets | CSV | Volume signal |
+| 4 | SYN Flag Count | CSV | Port scan signature |
+| 5 | RST Flag Count | CSV | Closed port response |
+| 6 | ACK Flag Count | CSV | Handshake completion |
+| 7 | Flow IAT Mean | CSV | Inter-arrival timing |
+| 8 | Bwd Packet Length Mean | CSV | Response size |
+| 9 | Init_Win_bytes_forward | CSV | TCP window size |
+| 10 | MTD Port Delta | Placeholder | Future MTD integration |
+| 11 | Shadow Node Interaction | Placeholder | Future honeypot integration |
+
+---
+## Deception Subsystem
+
+Based on [Aegis Entropy](https://github.com/MrGray17/Aegis_Entropy) &mdash; Moving Target Defense:
+
+| Module | What It Does |
+|--------|-------------|
+| `core_deception.py` | Redirects attackers to decoy ports via iptables REDIRECT, auto-blacklists after threshold |
+| `network_mutator.py` | Rotates the honeypot surface every 30s, shuffles active ports |
+| `traffic_shaper.py` | NFQUEUE hook mutates outgoing TCP destination ports in real-time |
+| `active_defense.py` | Automated response engine that orchestrates all deception actions |
+| `monitor_interface.py` | Terminal-based telemetry dashboard for the deception layer |
+
+---
 
 ## Quick Start
 
+### 1. Clone and install
 ```bash
-# 1. Install dependencies
+git clone https://github.com/MrGray17/Portscan_IDS.git
+cd Portscan_IDS
+python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
-
-# 2. Run detection pipeline (trains models)
-python detection/src/cicids2017_pipeline.py
-
-# 3. Start the dashboard
-python dashboard/app.py
-# → http://localhost:5000
-
-# 4. (Optional) Start deception subsystem (requires root)
-sudo iptables -A OUTPUT -p tcp -j NFQUEUE --queue-num 1
-sudo python3 deception/src/traffic_shaper.py &
-python3 deception/src/network_mutator.py &
-python3 deception/src/monitor_interface.py
 ```
+
+### 2. Train models (one-time)
+```bash
+python detection/src/cicids2017_pipeline.py
+```
+
+### 3. Start the dashboard
+```bash
+python dashboard/app.py
+# Open http://localhost:5000
+```
+
+### 4. Run a live demo (two VMs)
+```bash
+# Ubuntu Server:
+bash demo/ubuntu_setup.sh
+
+# Kali Linux:
+bash demo/kali_attack.sh 192.168.56.10
+```
+
+---
 
 ## Configuration
 
-All paths, ports, and thresholds are in `config.py`:
+All paths, ports, and thresholds in `config.py`:
 
 ```python
-DATA_DIR            = "data"
-DETECTION_LOG_FILE  = "data/detection_logs.json"
-DECEPTION_LOG_FILE  = "data/deception_logs.json"
-DECEPTION_PORT_START = 1000
-DECEPTION_PORT_END   = 1100
-BAN_THRESHOLD        = 10
-REFRESH_MS           = 2000    # Dashboard push interval
+DATA_DIR              = "data"
+DETECTION_LOG_FILE    = "data/detection_logs.json"
+DECEPTION_LOG_FILE    = "data/deception_logs.json"
+DECEPTION_PORT_START  = 1000
+DECEPTION_PORT_END    = 1100
+BAN_THRESHOLD         = 10
+DASHBOARD_REFRESH_MS  = 2000
+CONFIDENCE_THRESHOLD  = 0.95
+ALERT_THRESHOLD       = 0.80
 ```
 
-## ML Pipeline (cicids2017_pipeline.py)
+---
 
-1. Fetch CICIDS2017 datasets (if missing)
-2. Merge all daily CSVs into a single DataFrame
-3. Clean column names, drop unused columns
-4. Encode categorical features (Label → binary)
-5. Train/test split (80/20, stratified)
-6. Train XGBoost and Random Forest
-7. Evaluate (accuracy, precision, recall, F1, ROC-AUC, confusion matrix)
-8. Export artifacts: models, encoders, metrics JSON, sample predictions CSV
+## Architecture Decisions
 
-## Deception Subsystem (Aegis Entropy)
+| Decision | Rationale |
+|----------|-----------|
+| SMOTE on train only | Prevents data leakage from synthetic test samples |
+| IQR capping over removal | Preserves valuable attack data, reduces bias |
+| Median imputation over mean | Robust to skewed network traffic distributions |
+| Log1p for skewed features | Handles zeros, preserves order, reduces extreme value influence |
+| Stratified split | Maintains 55/45 class ratio in both train and test |
+| 2 MTD placeholders | Architecture ready for real-time honeypot port delta integration |
+| Isolation Forest on unsupervised path | Separate training without SMOTE (unsupervised algorithm) |
 
-Based on [MrGray17/Aegis_Entropy](https://github.com/MrGray17/Aegis_Entropy):
+---
 
-- **core_deception.py** — Redirects attackers to decoy ports, deploys phantom subnets, auto-blacklists after BAN_THRESHOLD events
-- **network_mutator.py** — Rotates the honeypot surface every 30s (configurable), shuffles active ports via iptables
-- **traffic_shaper.py** — NFQUEUE hook that mutates outgoing TCP destination ports in real-time
-- **monitor_interface.py** — Terminal-based telemetry dashboard for the deception layer
+## Team
 
-## Log Schema
+| Name | Role |
+|------|------|
+| Adil DILLEKH | ML pipeline, data preprocessing, model training & evaluation |
+| Khadija Nafia | ML pipeline co-development |
+| El Yazid | Deception subsystem (Aegis Entropy), dashboard, integration, config |
 
-**detection_logs.json:**
-```json
-{
-  "timestamp": "2026-06-13T10:30:00",
-  "src_ip": "192.168.1.100",
-  "dst_port": 22,
-  "prediction": 1,
-  "label": 1,
-  "action": "BLOCK"
-}
-```
-
-**deception_logs.json:**
-```json
-{
-  "timestamp": "2026-06-13T10:30:00",
-  "event_type": "REDIRECT",
-  "src_ip": "192.168.1.100",
-  "original_port": 22,
-  "decoy_port": 1042
-}
-```
+---
 
 ## License
 
-Academic use only — ENSA Kenitra
+Academic use only &mdash; ENSA Kenitra
