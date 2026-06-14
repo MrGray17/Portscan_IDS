@@ -1,0 +1,1 @@
+../../detection/pipeline_output/xgboost_model.joblib
