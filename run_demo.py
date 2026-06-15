@@ -167,10 +167,44 @@ def interactive_menu():
             print("  Invalid choice. Try again.")
 
 
+def run_live_demo(iface=None, dry_run=False):
+    """Start live packet capture + dashboard."""
+    import subprocess
+    import signal
+
+    print("\n[AEGIS] Starting live capture mode...")
+    print(f"[AEGIS] Interface: {iface or config.IDS_INTERFACE}")
+    print(f"[AEGIS] Dashboard: http://localhost:{config.DASHBOARD_PORT}")
+
+    live_script = os.path.join(PROJECT_ROOT, "capture", "live_capture.py")
+    cmd = [sys.executable, live_script]
+    if iface:
+        cmd.extend(["--iface", iface])
+    if dry_run:
+        cmd.append("--dry-run")
+
+    proc = subprocess.Popen(cmd)
+
+    def shutdown(sig, frame):
+        print("\n[AEGIS] Shutting down...")
+        proc.terminate()
+        proc.wait()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, shutdown)
+    signal.signal(signal.SIGTERM, shutdown)
+
+    try:
+        proc.wait()
+    except KeyboardInterrupt:
+        shutdown(None, None)
+
 def main():
     parser = argparse.ArgumentParser(description="AEGIS Entropy — Unified Demo")
     parser.add_argument("--offline", action="store_true", help="Run offline demo directly")
     parser.add_argument("--dashboard-only", action="store_true", help="Start dashboard only")
+    parser.add_argument("--live", action="store_true", help="Run live capture with dashboard")
+    parser.add_argument("--iface", default=None, help="Network interface for live capture")
     args = parser.parse_args()
 
     ensure_dirs()

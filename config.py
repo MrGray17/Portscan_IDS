@@ -50,7 +50,7 @@ FAST_WINDOW_SECONDS = 10       # Fast scan detection window
 SLOW_WINDOW_SECONDS = 60       # Slow scan detection window (Isolation Forest)
 
 # --- Network Config ---
-IDS_INTERFACE = "eth0"         # Network interface to capture on
+IDS_INTERFACE = "enp0s8"         # VirtualBox Internal Network interface (enp0s8 for lab-cyber)
 HONEYPOT_IPS = [               # IPs of deployed honeypot nodes
     # "192.168.1.200",         # ← Update after VM setup
 ]
